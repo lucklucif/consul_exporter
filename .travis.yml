@@ -1,5 +1,35 @@
 sudo: false
+
+services:
+- docker
+
 language: go
 
 go:
 - 1.8
+
+go_import_path: github.com/criteo-forks/consul_exporter
+
+script:
+- make style test
+
+before_deploy:
+- make promu
+- promu crossbuild
+- promu crossbuild tarballs
+
+branches:
+  only:
+  - master
+  - criteo
+
+deploy:
+  provider: releases
+  api_key:
+    secure: WCXrzlT1OSSbcqRsHCQtuKZuEveTKvX7fA4lalrkVUWmX1LovnalWn1NIrehXh2LHEiJMvAtWZPdbwgRzPwGX2T2QP8LRbLG03hAN4zfWC3TlotYFiFyeVGeO8ki/WVSsaObZeMgTRI+pXn+w+aLfWpXRiB5OnxMR+/sQK037qp4EFHWpxtXsRBLEGII3pCBjY0XNtGMEPsjQirYAvci+fHT4hMaBKoZ2nZNktZmcixt62KsMmW8catgMT0xojM7ofjJvoI5xeZKetzlvP9buDUqLKKCfKdoopBjyyYv8CwLgVXOhrLCZppOLA4OvZ4l5YM4q4MfGUFuR5uAvNHe1EsFnSwEQSId8VqZgBvOJjdRbxs9KZGQkKuTrWWF9KIAjKRsxb9f8s7jTH8oaq91yJixUVRA1ruqzOx2485YucyBOwajQTosebOIXJKCHjkp4vHXp8oe9kteKIHzVDc39A/j8jRewKTCeqdqV55slEp8Y7YHh5ZjzH5YmO99avgzmn2MwDy/YW03dgS3g8jte7NMfWTVW/SfqDjBSZnVEBnxURSES14G23o3Z9Pr+LCdhXdHCCE341yscb7daV/6KypLt4mFE7dlYnMq4jMGe2dX3rvvDRrKzhVo5O5zj8d6MT1YMYNitnMHQnuMwFasktR9PaQX6DqcJl9wM16w610=
+  file_glob: true
+  file: .tarballs/*
+  skip_cleanup: true
+  on:
+    repo: criteo-forks/consul_exporter
+    tags: true
